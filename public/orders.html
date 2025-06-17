@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Entegrasyon - Siparişler</title>
+  <link href="https://cdn.jsdelivr.net/npm/tabler@1.0.0-beta19/dist/css/tabler.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/tabler@1.0.0-beta19/dist/js/tabler.min.js" defer></script>
+</head>
+<body>
+  <div class="page">
+    <header class="navbar navbar-expand-md navbar-light d-print-none">
+      <div class="container-xl">
+        <h1 class="navbar-brand navbar-brand-autodark">Entegrasyon</h1>
+      </div>
+    </header>
+    <div class="page-wrapper">
+      <div class="page-body">
+        <div class="container-xl">
+          <h2 class="page-title">Siparişler</h2>
+          <div class="card">
+            <table class="table card-table table-vcenter">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Pazar Yeri ID</th>
+                  <th>Durum</th>
+                  <th>Alıcı</th>
+                  <th>Tutar</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="orders-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<script>
+const API_TOKEN = 'CHANGE_ME';
+async function loadOrders() {
+  const res = await fetch('/orders', { headers: { 'Authorization': 'Bearer ' + API_TOKEN } });
+  const orders = await res.json();
+  const tbody = document.getElementById('orders-body');
+  tbody.innerHTML = '';
+  orders.forEach(o => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${o.id}</td>
+      <td>${o.external_order_id}</td>
+      <td>${o.status}</td>
+      <td>${o.shipping_name}</td>
+      <td>${o.total_price}</td>
+      <td><button class="btn btn-sm btn-primary" onclick="createLabel(${o.id})">Kargo Fişi</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+async function createLabel(id) {
+  const formData = new FormData();
+  formData.append('id', id);
+  const res = await fetch('/order/label', {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + API_TOKEN },
+    body: formData
+  });
+  const data = await res.json();
+  if (res.ok) {
+    alert('Barkod: ' + data.barcode);
+  } else {
+    alert('Hata: ' + data.error);
+  }
+}
+loadOrders();
+</script>
+</body>
+</html>
