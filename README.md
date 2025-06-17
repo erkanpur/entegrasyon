@@ -12,6 +12,7 @@ Bu proje, PHP 8.x kullanarak pazaryeri siparişlerinin senkronizasyonu ve kargo 
 ## Kullanım
 
 - `public/index.php` dosyası API için giriş noktasıdır.
-- `cron/fetch_orders.php` dosyası, pazaryerlerinden sipariş çekmek için çalıştırılabilir.
+- `cron/fetch_orders.php` dosyası, pazaryerlerinden sipariş çekmek ve veritabanına kaydetmek için çalıştırılabilir.
+- `POST /order/label` endpointi, bir sipariş için Yurtici Kargo etiketi oluşturur. `id` parametresi gereklidir.
 
 Bu iskelet proje geliştirmeye açıktır. Servis sınıflarındaki `TODO` kısımları doldurarak entegrasyonları tamamlayabilirsiniz.

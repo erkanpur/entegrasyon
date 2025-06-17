@@ -2,6 +2,7 @@
 namespace App\Controllers;
 
 use App\Services\OrderService;
+use App\Services\Shipping\YurticiShippingService;
 
 class OrderController
 {
@@ -41,5 +42,28 @@ class OrderController
             http_response_code(404);
             echo json_encode(['error' => 'Not found']);
         }
+    }
+
+    public function createLabel(?string $id): void
+    {
+        if ($id === null) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Missing id']);
+            return;
+        }
+
+        $order = $this->service->getById($id);
+        if (!$order) {
+            http_response_code(404);
+            echo json_encode(['error' => 'Order not found']);
+            return;
+        }
+
+        $shippingService = new YurticiShippingService();
+        $label = $shippingService->createLabel($order);
+        $this->service->createShippingLabel($order['id'], $label);
+
+        header('Content-Type: application/json');
+        echo json_encode($label);
     }
 }

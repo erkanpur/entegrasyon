@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use App\Services\{TrendyolOrderService, HepsiburadaOrderService, PazaramaOrderService, WooOrderService};
+use App\Services\{TrendyolOrderService, HepsiburadaOrderService, PazaramaOrderService, WooOrderService, OrderService};
 
 $services = [
     new TrendyolOrderService(),
@@ -10,7 +10,11 @@ $services = [
     new WooOrderService()
 ];
 
+$orderService = new OrderService();
+
 foreach ($services as $service) {
     $orders = $service->fetchOrders();
-    // TODO: save orders to DB
+    foreach ($orders as $order) {
+        $orderService->save($order);
+    }
 }

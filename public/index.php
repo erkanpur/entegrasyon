@@ -22,6 +22,12 @@ switch ($uri) {
             $controller->show($id);
         }
         break;
+    case '/order/label':
+        if ($method === 'POST') {
+            $id = $_POST['id'] ?? null;
+            $controller->createLabel($id);
+        }
+        break;
     default:
         http_response_code(404);
         echo json_encode(['error' => 'Not Found']);
